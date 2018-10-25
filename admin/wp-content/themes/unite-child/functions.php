@@ -66,7 +66,7 @@ function films_post_type() {
       );
        
       // Registering your films Post Type
-      register_post_type( 'movies', $args );
+      register_post_type( 'films', $args );
    
   }
    
@@ -76,4 +76,30 @@ function films_post_type() {
   */
    
   add_action( 'init', 'films_post_type', 0 );
+
+
+function films_loop_shortcode() {
+    $args = array(
+        'post_type' => 'films',
+        'post_status' => 'publish',
+    );
+
+    $my_query = null;
+    $my_query = new WP_query($args);
+    if($my_query->have_posts()):
+        echo "<h3 class='widget-title'>Films</h3>";
+        while($my_query->have_posts()) : $my_query->the_post();
+            $custom = get_post_custom( get_the_ID() );
+            echo "<ul>";
+            echo "<li><a href='".get_the_permalink()."'>".get_the_title()."</a></li>";
+            echo "</ul>";
+        endwhile;
+        wp_reset_postdata();
+    else :
+    _e( 'Sorry, no posts matched your criteria.' );
+    endif;
+}
+
+add_shortcode( 'films_loop', 'films_loop_shortcode' );
+
 ?>
